@@ -1,0 +1,56 @@
+import os
+
+board = [' ' for _ in range(9)]
+# Dictionary to remember the order of moves for each player
+player_moves = {'X': [], 'O': []}
+
+def print_board():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("\nEndless Tic-Tac-Toe (No Draws!)\n")
+    print("Rule: You can only have 3 marks. Your 4th move deletes your 1st move.\n")
+    print(f" {board[0]} | {board[1]} | {board[2]} ")
+    print("---+---+---")
+    print(f" {board[3]} | {board[4]} | {board[5]} ")
+    print("---+---+---")
+    print(f" {board[6]} | {board[7]} | {board[8]} \n")
+
+def check_win(player):
+    wins = [(0,1,2), (3,4,5), (6,7,8), (0,3,6), (1,4,7), (2,5,8), (0,4,8), (2,4,6)]
+    return any(board[a] == board[b] == board[c] == player for a, b, c in wins)
+
+current_player = 'X'
+
+# Replaced the 9-turn loop with an infinite loop
+while True:
+    print_board()
+    
+    try:
+        move = int(input(f"Player {current_player}, choose a spot (1-9): ")) - 1
+        
+        if move < 0 or move > 8:
+            print("Invalid number. Choose between 1 and 9.")
+            continue
+            
+        if board[move] == ' ':
+            # 1. Record the move and place the mark
+            player_moves[current_player].append(move)
+            board[move] = current_player
+            
+            # 2. If the player has more than 3 marks, erase the oldest one
+            if len(player_moves[current_player]) > 3:
+                oldest_move = player_moves[current_player].pop(0)
+                board[oldest_move] = ' '
+            
+            # 3. Check for a win
+            if check_win(current_player):
+                print_board()
+                print(f"🏆 Player {current_player} wins!")
+                break
+                
+            # Switch player
+            current_player = 'O' if current_player == 'X' else 'X'
+        else:
+            print("Spot already taken! Try another one.")
+            
+    except ValueError:
+        print("Please type a valid number.")
